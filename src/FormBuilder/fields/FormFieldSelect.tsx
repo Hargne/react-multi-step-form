@@ -6,28 +6,29 @@ import {
   Select,
   SelectProps,
 } from "@mui/material";
-import { FormField, FormMultiSelectElementProps } from "./FormStep.types";
+import {
+  FormBuilderFieldComponentProps,
+  FormBuilderFieldMultiSelectProps,
+} from "./types";
 
-type FormFieldMultiSelectProps = {
-  field: FormField;
-  label?: string;
-  options: FormMultiSelectElementProps["options"];
-  helperText?: string;
-} & SelectProps;
+type FormFieldSelectProps = {
+  options: FormBuilderFieldMultiSelectProps["options"];
+} & FormBuilderFieldComponentProps &
+  SelectProps;
 
-export default function FormFieldMultielect({
+export default function FormFieldSelect({
   field,
+  helperText,
   ...props
-}: Readonly<FormFieldMultiSelectProps>) {
+}: Readonly<FormFieldSelectProps>) {
   return (
     <FormControl fullWidth>
       {props.label && <InputLabel>{props.label}</InputLabel>}
       <Select
         variant="outlined"
-        multiple
         {...field}
         {...props}
-        value={field.value ?? []}
+        value={field.value ?? ""}
       >
         {props.options.map((option) => (
           <MenuItem key={option.value} value={option.value}>
@@ -35,7 +36,7 @@ export default function FormFieldMultielect({
           </MenuItem>
         ))}
       </Select>
-      {props.helperText && <FormHelperText>{props.helperText}</FormHelperText>}
+      {helperText && <FormHelperText>{helperText}</FormHelperText>}
     </FormControl>
   );
 }

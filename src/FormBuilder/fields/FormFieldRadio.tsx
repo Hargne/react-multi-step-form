@@ -7,15 +7,15 @@ import {
   RadioGroup,
   RadioGroupProps,
 } from "@mui/material";
-import { FormField, FormRadioElementProps } from "./FormStep.types";
+import {
+  FormBuilderFieldComponentProps,
+  FormBuilderFieldRadioProps,
+} from "./types";
 
 type FormFieldRadioProps = {
-  field: FormField;
-  label?: string;
-  options: FormRadioElementProps["options"];
-  helperText?: string;
-  error?: boolean;
-} & RadioGroupProps;
+  options: FormBuilderFieldRadioProps["options"];
+} & FormBuilderFieldComponentProps &
+  RadioGroupProps;
 
 export default function FormFieldRadio({
   field,

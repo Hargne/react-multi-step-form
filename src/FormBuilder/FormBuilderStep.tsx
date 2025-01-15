@@ -1,22 +1,28 @@
 import { Button, Stack } from "@mui/material";
 import { Controller, ControllerRenderProps, useForm } from "react-hook-form";
-import {
-  MultiStepFormData,
-  FormStepProps,
-  MultiStepFormElement,
-} from "./FormStep.types";
-import FormFieldText from "./FormFieldText";
-import FormFieldSelect from "./FormFieldSelect";
-import FormFieldMultiSelect from "./FormFieldMultiSelect";
-import FormFieldRadio from "./FormFieldRadio";
-import FormFieldCheckbox from "./FormFieldCheckbox";
+import FormFieldCheckbox from "./fields/FormFieldCheckbox";
+import FormFieldMultiSelect from "./fields/FormFieldMultiSelect";
+import FormFieldRadio from "./fields/FormFieldRadio";
+import FormFieldSelect from "./fields/FormFieldSelect";
+import FormFieldText from "./fields/FormFieldText";
+import { FormBuilderField } from "./fields/types";
+import { FormBuilderData, FormBuilderElements } from "./types";
 
-export default function FormStep(props: Readonly<FormStepProps>) {
+export type FormBuilderStepProps = {
+  elements: FormBuilderElements;
+  onSubmit: (data: FormBuilderData) => void;
+  submitButtonLabel?: string;
+  onBack?: () => void;
+  backButtonLabel?: string;
+  validationTrigger?: "all" | "onBlur" | "onChange" | "onSubmit" | "onTouched";
+};
+
+export default function FormBuilderStep(props: Readonly<FormBuilderStepProps>) {
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<MultiStepFormData>({
+  } = useForm<FormBuilderData>({
     mode: props.validationTrigger,
     defaultValues: Object.fromEntries(
       Object.entries(props.elements).map(([key, element]) => {
@@ -25,66 +31,66 @@ export default function FormStep(props: Readonly<FormStepProps>) {
         }
         return [key, ""];
       })
-    ) as MultiStepFormData,
+    ) as FormBuilderData,
   });
 
   function renderInput(
-    element: MultiStepFormElement,
-    field: ControllerRenderProps<MultiStepFormData, never>
+    field: FormBuilderField,
+    fieldProps: ControllerRenderProps<FormBuilderData, never>
   ) {
-    const helperText = errors[field.name]
-      ? errors[field.name]!.message
-      : element.description;
-    const hasError = !!errors[field.name];
+    const helperText = errors[fieldProps.name]
+      ? errors[fieldProps.name]!.message
+      : field.description;
+    const hasError = !!errors[fieldProps.name];
 
-    switch (element.type) {
+    switch (field.type) {
       case "text":
         return (
           <FormFieldText
-            label={element.label}
+            label={field.label}
             error={hasError}
             helperText={helperText}
-            field={field}
+            field={fieldProps}
           />
         );
       case "select":
         return (
           <FormFieldSelect
-            label={element.label}
+            label={field.label}
             error={hasError}
             helperText={helperText}
-            field={field}
-            options={element.options}
+            field={fieldProps}
+            options={field.options}
           />
         );
       case "multiselect":
         return (
           <FormFieldMultiSelect
-            label={element.label}
+            label={field.label}
             error={hasError}
             helperText={helperText}
-            field={field}
-            options={element.options}
+            field={fieldProps}
+            options={field.options}
           />
         );
       case "radio":
         return (
           <FormFieldRadio
-            label={element.label}
+            label={field.label}
             error={hasError}
             helperText={helperText}
-            field={field}
-            options={element.options}
+            field={fieldProps}
+            options={field.options}
           />
         );
       case "checkbox":
         return (
           <FormFieldCheckbox
-            label={element.label}
+            label={field.label}
             error={hasError}
             helperText={helperText}
-            field={field}
-            options={element.options}
+            field={fieldProps}
+            options={field.options}
           />
         );
       default:
@@ -93,8 +99,13 @@ export default function FormStep(props: Readonly<FormStepProps>) {
   }
 
   return (
-    <Stack component="form" onSubmit={handleSubmit(props.onSubmit)} spacing={6}>
-      <Stack spacing={2}>
+    <Stack
+      component="form"
+      onSubmit={handleSubmit(props.onSubmit)}
+      spacing={6}
+      height="100%"
+    >
+      <Stack spacing={2} flexGrow={1}>
         {Object.entries(props.elements).map(([key, element]) => (
           <Controller
             key={key}

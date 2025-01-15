@@ -1,9 +1,7 @@
 import { TextField, TextFieldProps } from "@mui/material";
-import { FormField } from "./FormStep.types";
+import { FormBuilderFieldComponentProps } from "./types";
 
-type FormFieldTextProps = {
-  field: FormField;
-} & TextFieldProps;
+type FormFieldTextProps = FormBuilderFieldComponentProps & TextFieldProps;
 
 export default function FormFieldText({
   field,
